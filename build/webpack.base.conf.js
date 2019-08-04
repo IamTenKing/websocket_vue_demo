@@ -74,6 +74,22 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.swf$/,            
+        loader: 'url-loader',
+        options: {
+          limit: 1024,
+          name: 'file/[path][name].[hash:7].[ext]'
+        }
+      },
+      {
+        //视频加载-兼容swf-upload
+        test: /\.(mp4|flv|swf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: "file-loader",
+        options: {
+          name: utils.assetsPath("video/[name].[hash:7].[ext]")
+        }
       }
     ]
   },

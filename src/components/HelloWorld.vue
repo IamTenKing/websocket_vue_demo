@@ -9,8 +9,10 @@
   </div>
 </template>
 <script>
+window.WEB_SOCKET_SWF_LOCATION = '../../static/web-socket-js-master/WebSocketMain.swf'
+window.WEB_SOCKET_DEBUG = true
 export default {
-  name: 'WebSocket',
+  name: 'helloWebSocket',
   components: {
   },
   data () {
@@ -21,17 +23,22 @@ export default {
     }
   },
   mounted () {
-    if ('WebSocket' in window) {
-      this.websocket = new WebSocket('ws://localhost:8081/ws')
-      this.initWebSocket()
-    } else {
-      alert('当前浏览器 Not support websocket')
-    }
+    this.init()
   },
   beforeDestroy () {
     this.onbeforeunload()
   },
   methods: {
+    init () {
+      if ('WebSocket' in window) {
+        this.isIE9Brower()
+        this.websocket = new WebSocket('ws://localhost:8081/ws')
+        this.initWebSocket()
+      } else {
+        this.websocket = new WebSocket('ws://localhost:8081/ws')
+        this.initWebSocket()
+      }
+    },
     initWebSocket () {
       // 连接错误
       this.websocket.onerror = this.setErrorMessage
@@ -66,6 +73,26 @@ export default {
     },
     closeWebSocket () {
       this.websocket.close()
+    },
+    isIE9Brower () {
+      // alert('111')
+      if (navigator.userAgent.indexOf('MSIE') > 0) {
+        if (navigator.userAgent.indexOf('MSIE 9.0') > 0 ||
+            navigator.userAgent.indexOf('MSIE 8.0') > 0 ||
+            navigator.userAgent.indexOf('MSIE 7.0') > 0 ||
+            navigator.userAgent.indexOf('MSIE 6.0') > 0) {
+          try {
+            // debugger
+            // WebSocket.WEB_SOCKET_SWF_LOCATION = swfurl
+            WebSocket.WEB_SOCKET_SWF_LOCATION = 'WebSocketMain.swf'
+            // WebSocket.loadFlashPolicyFile('xmlsocket://192.168.2.62:843')
+            WebSocket.loadFlashPolicyFile('xmlsocket://localhost:8843')
+          } catch (e) {
+          // 对于支持WebSocket的浏览器是会出现异常，属于正常的情况
+            alert(e)
+          }
+        }
+      }
     }
   }
 }
